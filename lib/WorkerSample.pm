@@ -25,10 +25,16 @@ sub run {
         },
     });
 
+    # run in foreground
+    $SIG{INT} = sub {
+        $pm->signal_all_children('TERM');
+        $pm->wait_all_children;
+        exit 0;
+    };
+
     while ( $pm->signal_received ne 'TERM' ) {
         $pm->start and next;
 
-        setpgrp();
         infof( "spawn" );
 
         my $reqs_before_exit = 3;
@@ -59,17 +65,14 @@ sub work {
     infof("working($time_required)");
 
     eval {
-        # 先に子(プロセスグループ)を殺しとく。そうしないとゾンビ化した。
         local $SIG{ALRM} = sub {
-            $SIG{ALRM} = 'IGNORE';
-            kill 'ALRM', -$$;
-            while ( waitpid(-1, WNOHANG) > 0 ) {}
             die("timed out");
         };
 
-        # $timeout秒経ったら自殺
         alarm $timeout;
+        local $SIG{CHLD} = 'IGNORE';
         system "sleep $time_required";
+        alarm 0;
     };
     alarm 0;
 
