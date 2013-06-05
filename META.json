@@ -45,6 +45,7 @@
             "FindBin::libs" : "0",
             "Log::Minimal" : "0",
             "Parallel::Prefork" : "0",
+            "Server::Starter" : "0",
             "Sub::Throttle" : "0",
             "perl" : "5.008005"
          }
@@ -56,5 +57,16 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/lamanotrama/worker-sample/issues"
+      },
+      "homepage" : "https://github.com/lamanotrama/worker-sample",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/lamanotrama/worker-sample.git",
+         "web" : "https://github.com/lamanotrama/worker-sample"
+      }
+   },
    "version" : "0.01"
 }
