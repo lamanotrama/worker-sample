@@ -76,6 +76,7 @@ sub work {
     if ( my $e = $@ ) {
         chomp $@;
         warnf("faild: $@");
+        die 'die';
     } else {
         infof("finish");
     }
