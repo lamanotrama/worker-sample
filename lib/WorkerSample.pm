@@ -99,6 +99,11 @@ WorkerSample - It's new $module
 
     carton exec bin/worker.pl
 
+    //or
+
+    start_server -- carton exec bin/worker.pl
+    pkill -HUP start_server
+
 =head1 SETUP
 
     cd /path/to/project_root
