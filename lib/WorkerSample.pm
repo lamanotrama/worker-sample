@@ -5,6 +5,7 @@ use warnings;
 use Parallel::Prefork;
 use Sub::Throttle qw(throttle);
 use Log::Minimal;
+use POSIX ":sys_wait_h";
 
 our $VERSION = "0.01";
 
@@ -51,9 +52,33 @@ sub run {
 
 
 sub work {
-    infof("working");
-    sleep 20;
-    infof("finish");
+
+    my $timeout = 10;
+    my $time_required = int(rand($timeout + 5));
+
+    infof("working($time_required)");
+
+    eval {
+        # 先に子(プロセスグループ)を殺しとく。そうしないとゾンビ化した。
+        local $SIG{ALRM} = sub {
+            $SIG{ALRM} = 'IGNORE';
+            kill 'ALRM', -$$;
+            while ( waitpid(-1, WNOHANG) > 0 ) {}
+            die("timed out");
+        };
+
+        # $timeout秒経ったら自殺
+        alarm $timeout;
+        system "sleep $time_required";
+    };
+    alarm 0;
+
+    if ( my $e = $@ ) {
+        chomp $@;
+        warnf("faild: $@");
+    } else {
+        infof("finish");
+    }
 }
 
 
