@@ -9,5 +9,6 @@ requires 'Sub::Throttle';
 requires 'Log::Minimal';
 requires 'FindBin::libs';
 requires 'Server::Starter';
+requires 'Proc::Killfam';
 
 

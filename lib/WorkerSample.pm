@@ -6,6 +6,7 @@ use Parallel::Prefork;
 use Sub::Throttle qw(throttle);
 use Log::Minimal;
 use POSIX ":sys_wait_h";
+use Proc::Killfam;
 
 our $VERSION = "0.01";
 
@@ -66,11 +67,13 @@ sub work {
 
     eval {
         local $SIG{ALRM} = sub {
+            $SIG{ALRM} = "IGNORE";
+            killfam('ALRM', $$);
+            while ( waitpid(-1, WNOHANG) >= 0 ) {}
             die("timed out");
         };
 
         alarm $timeout;
-        local $SIG{CHLD} = 'IGNORE';
         system "sleep $time_required";
         alarm 0;
     };
