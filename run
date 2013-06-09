@@ -1,0 +1,10 @@
+#!/bin/sh
+
+export LANG=C
+export HOME=/home/lamanotrama
+cd /home/lamanotrama/git/worker-sample
+
+exec 2>&1
+exec \
+   setuidgid lamanotrama \
+   ./env start_server worker.pl

@@ -1,0 +1,13 @@
+#!/bin/bash -l
+
+
+ME="${BASH_SOURCE[0]:-$0}"
+PROJECT_ROOT=$( dirname $(readlink -f $ME) )
+export PLENV_VERSION=$( cat $PROJECT_ROOT/.perl-version )
+
+ARCHNAME=$( perl -MConfig -e 'print $Config{archname}' )
+export PERL5LIB=$PROJECT_ROOT/local/lib/perl5:$PROJECT_ROOT/local/lib/perl5/$ARCHNAME
+export PERL5OPT="-Mlib::core::only -Mlib=$PROJECT_ROOT/lib -Mlib=$PROJECT_ROOT/local/lib/perl5"
+export PATH="$PATH:$PROJECT_ROOT/bin:$PROJECT_ROOT/local/bin"
+
+exec "$@"
